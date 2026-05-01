@@ -2,84 +2,147 @@ import React from 'react'
 import { useAppDispatch }  from '@/hooks/useAppDispatch'
 import { useAppSelector }  from '@/hooks/useAppSelector'
 import { setDashboardTab } from '@/store/slices/uiSlice'
-import { HomeIcon, PlusIcon, ChartIcon } from '@/components/icons'
+import { EyebrowLabel }    from '@/components/ui'
 import { colors, fonts, radius } from '@/styles/theme'
 import type { DashboardTab } from '@/types'
 
-interface NavItem { id: DashboardTab; label: string; Icon: React.FC<{ size?: number; color?: string }> }
+interface NavItem { id: DashboardTab | string; label: string; active?: boolean }
 
 const NAV: NavItem[] = [
-  { id: 'home',   label: 'Дашборд',    Icon: HomeIcon  },
-  { id: 'new',    label: 'Новая цель', Icon: PlusIcon  },
-  { id: 'detail', label: 'Прогресс',   Icon: ChartIcon },
+  { id: 'home',   label: 'Дашборд'     },
+  { id: 'new',    label: 'Новая цель'  },
+  { id: 'detail', label: 'Прогресс'    },
+  { id: 'cal',    label: 'Календарь'   },
+  { id: 'chat',   label: 'Чат с ИИ'    },
 ]
 
 export const Sidebar: React.FC = () => {
   const dispatch     = useAppDispatch()
   const activeTab    = useAppSelector(s => s.ui.dashboardTab)
   const user         = useAppSelector(s => s.auth.user)
-  const goalsCount   = useAppSelector(s => s.goals.goals.length)
+  const goals        = useAppSelector(s => s.goals.goals)
 
   return (
     <aside style={{
-      width:        200,
+      width:        240,
       background:   colors.dark,
       borderRight:  `1px solid ${colors.border}`,
-      padding:      '22px 12px',
+      padding:      '26px 16px 20px',
       display:      'flex',
       flexDirection:'column',
       flexShrink:   0,
       height:       '100vh',
       position:     'sticky',
       top:          0,
-    }}>
-      <div style={{ marginBottom: 28, paddingLeft: 4 }}>
-        <div style={{ fontSize: 20, fontWeight: 500, color: colors.accent, letterSpacing: '1.5px', fontFamily: fonts.serif }}>
+    }} className="dashboard-sidebar">
+      {/* Logo */}
+      <div style={{ padding: '0 8px 28px' }}>
+        <div style={{
+          fontFamily: fonts.serif, fontStyle: 'italic',
+          fontSize: 26, color: colors.accent,
+          letterSpacing: '1.5px', lineHeight: 1,
+        }}>
           Apex
         </div>
-        <div style={{ fontSize: 10, color: 'rgba(237,232,223,0.28)', letterSpacing: '0.5px' }}>цели с ИИ</div>
+        <EyebrowLabel size={9.5} spacing="2px" style={{ marginTop: 4 }}>
+          цели с ИИ
+        </EyebrowLabel>
       </div>
 
-      <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 3 }}>
-        {NAV.map(({ id, label, Icon }) => {
+      <EyebrowLabel size={9.5} spacing="1.5px" style={{ padding: '0 12px 10px' }}>
+        Навигация
+      </EyebrowLabel>
+
+      <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {NAV.map(({ id, label }) => {
           const active = activeTab === id
+          const selectable = ['home', 'new', 'detail'].includes(id as string)
           return (
             <button
               key={id}
-              onClick={() => dispatch(setDashboardTab(id))}
+              onClick={() => selectable && dispatch(setDashboardTab(id as DashboardTab))}
               style={{
                 display:     'flex',
                 alignItems:  'center',
-                gap:         10,
-                padding:     '9px 12px',
+                gap:         11,
+                padding:     '10px 12px',
                 borderRadius: radius.md,
                 border:      'none',
                 fontFamily:  fonts.sans,
                 fontSize:    13,
-                cursor:      'pointer',
+                cursor:      selectable ? 'pointer' : 'default',
                 transition:  'all 0.15s',
                 background:  active ? 'rgba(232,153,48,0.11)' : 'transparent',
-                color:       active ? colors.accent : 'rgba(237,232,223,0.45)',
-                width:       '100%',
+                color:       active ? colors.accent : colors.textMuted,
                 textAlign:   'left',
+                position:    'relative',
+                opacity:     selectable ? 1 : 0.7,
               }}
             >
-              <Icon size={15} color={active ? colors.accent : undefined} />
+              {active && (
+                <div style={{
+                  position: 'absolute', left: 0, top: 8, bottom: 8,
+                  width: 2, background: colors.accent, borderRadius: 2,
+                }}/>
+              )}
+              <span style={{
+                width: 14, height: 14, borderRadius: 3,
+                border: `1.2px solid ${active ? colors.accent : colors.borderStrong}`,
+                flexShrink: 0,
+              }}/>
               {label}
             </button>
           )
         })}
       </nav>
 
+      {/* Goals accordion */}
+      <EyebrowLabel size={9.5} spacing="1.5px" style={{ padding: '24px 12px 10px' }}>
+        Мои цели
+      </EyebrowLabel>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+        {goals.map(g => (
+          <div key={g.id} style={{
+            display: 'flex', alignItems: 'center', gap: 10,
+            padding: '8px 12px', fontSize: 12, color: colors.textMuted,
+            cursor: 'pointer', borderRadius: 8,
+          }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: g.color, flexShrink: 0 }}/>
+            <div style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{g.title}</div>
+            <div style={{ fontSize: 10, color: colors.textGhost, fontFamily: fonts.mono }}>{g.progress}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ flex: 1 }}/>
+
       {/* User chip */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '10px 12px', background: 'rgba(255,255,255,0.04)', borderRadius: radius.md }}>
-        <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(232,153,48,0.18)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 500, color: colors.accent, flexShrink: 0 }}>
+      <div style={{
+        display: 'flex', alignItems: 'center', gap: 10,
+        padding: '10px 12px',
+        background: 'rgba(255,255,255,0.03)',
+        border: `1px solid ${colors.border}`,
+        borderRadius: radius.lg,
+      }}>
+        <div style={{
+          width: 32, height: 32, borderRadius: '50%',
+          background: 'linear-gradient(135deg, rgba(232,153,48,0.4), rgba(232,153,48,0.12))',
+          border: `1px solid ${colors.accentBorder}`,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 13, color: colors.accent, fontWeight: 500,
+          flexShrink: 0,
+        }}>
           {(user?.name?.[0] ?? 'Н').toUpperCase()}
         </div>
-        <div>
-          <div style={{ fontSize: 12, fontWeight: 500 }}>{user?.name ?? 'Никита'}</div>
-          <div style={{ fontSize: 10, color: 'rgba(237,232,223,0.3)' }}>{goalsCount} {goalsCount === 1 ? 'цель' : 'цели'} активны</div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 12.5, fontWeight: 500, color: colors.text }}>
+            {user?.name ?? 'Никита'}
+          </div>
+          <div style={{ fontSize: 10, color: colors.textGhost, letterSpacing: '0.3px' }}>
+            Pro · {goals.length} {goals.length === 1 ? 'цель' : 'цели'}
+          </div>
         </div>
+        <div style={{ fontSize: 12, color: colors.textFaint }}>⋯</div>
       </div>
     </aside>
   )

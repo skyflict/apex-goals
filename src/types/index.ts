@@ -20,11 +20,14 @@ export interface Milestone {
 export interface Goal {
   id: string
   title: string
+  level?: string          // e.g. "B2", "21.1K", "MVP"
   progress: number        // 0–100
   daysLeft: number
   category: string
   nextAction: string
+  nextDuration?: string   // e.g. "40 мин"
   color: string
+  streak?: number
   milestones: Milestone[]
 }
 

@@ -4,7 +4,7 @@ import { useAppSelector }    from '@/hooks/useAppSelector'
 import { completeMilestone } from '@/store/slices/goalsSlice'
 import { setDashboardTab }   from '@/store/slices/uiSlice'
 import { Button }            from '@/components/ui/Button'
-import { ProgressRing, Badge, AiInsight } from '@/components/ui'
+import { ProgressRing, AiInsight, EyebrowLabel, StripeCard, GoldTexture } from '@/components/ui'
 import { BackIcon, CheckIcon } from '@/components/icons'
 import { colors, fonts, radius } from '@/styles/theme'
 import type { Milestone } from '@/types'
@@ -17,17 +17,17 @@ interface MilestoneItemProps {
 }
 
 const MilestoneItem: React.FC<MilestoneItemProps> = ({ milestone, isLast, onComplete }) => (
-  <div style={{ display: 'flex', gap: 13, paddingBottom: isLast ? 0 : 20, position: 'relative' }}>
+  <div style={{ display: 'flex', gap: 14, paddingBottom: isLast ? 0 : 22, position: 'relative' }}>
     {/* Connector line */}
     {!isLast && (
-      <div style={{ position: 'absolute', left: 10, top: 22, bottom: 0, width: 1, background: 'rgba(255,255,255,0.07)' }} />
+      <div style={{ position: 'absolute', left: 11, top: 24, bottom: 0, width: 1, background: 'rgba(255,255,255,0.07)' }} />
     )}
 
     {/* Dot */}
     <div
       onClick={milestone.current ? onComplete : undefined}
       style={{
-        width:          21, height: 21,
+        width:          22, height: 22,
         borderRadius:   '50%',
         flexShrink:     0,
         zIndex:         1,
@@ -41,6 +41,7 @@ const MilestoneItem: React.FC<MilestoneItemProps> = ({ milestone, isLast, onComp
         border:         milestone.done    ? 'none'
                       : milestone.current ? `1.5px solid rgba(232,153,48,0.45)`
                       : `1.5px solid rgba(255,255,255,0.12)`,
+        boxShadow:      milestone.current ? `0 0 0 4px rgba(232,153,48,0.08)` : 'none',
       }}
     >
       {milestone.done    && <CheckIcon size={9} color={colors.bg} />}
@@ -48,20 +49,34 @@ const MilestoneItem: React.FC<MilestoneItemProps> = ({ milestone, isLast, onComp
     </div>
 
     {/* Text */}
-    <div style={{ paddingTop: 1 }}>
+    <div style={{ paddingTop: 1, flex: 1 }}>
       <div style={{
-        fontSize:        12,
-        fontWeight:      milestone.current ? 500 : 400,
-        color:           milestone.done    ? 'rgba(237,232,223,0.35)'
-                       : milestone.current ? colors.text
-                       : 'rgba(237,232,223,0.45)',
-        textDecoration:  milestone.done ? 'line-through' : 'none',
-        fontFamily:      fonts.sans,
+        display:        'flex',
+        alignItems:     'baseline',
+        justifyContent: 'space-between',
+        gap:            10,
       }}>
-        {milestone.text}
-      </div>
-      <div style={{ fontSize: 10, color: 'rgba(237,232,223,0.25)', marginTop: 2, fontFamily: fonts.sans }}>
-        {milestone.date}
+        <div style={{
+          fontSize:        13,
+          fontWeight:      milestone.current ? 500 : 400,
+          color:           milestone.done    ? colors.textFaint
+                         : milestone.current ? colors.text
+                         : colors.textMuted,
+          textDecoration:  milestone.done ? 'line-through' : 'none',
+          fontFamily:      fonts.sans,
+        }}>
+          {milestone.text}
+        </div>
+        <div style={{
+          fontSize:      9.5,
+          color:         milestone.current ? colors.accent : colors.textGhost,
+          fontFamily:    fonts.mono,
+          letterSpacing: '0.5px',
+          textTransform: 'uppercase',
+          flexShrink:    0,
+        }}>
+          {milestone.date}
+        </div>
       </div>
     </div>
   </div>
@@ -77,33 +92,94 @@ export const GoalDetailScreen: React.FC = () => {
   if (!goal) return null
 
   return (
-    <div style={{ padding: '20px', maxWidth: 680, animation: 'fadeUp 0.25s ease' }}>
+    <div style={{ padding: '24px 28px 60px', maxWidth: 720, animation: 'fadeUp 0.25s ease' }}>
 
       {/* Back */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 22 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 22 }}>
         <Button variant="icon" onClick={() => dispatch(setDashboardTab('home'))} style={{ padding: '7px 11px' }}>
           <BackIcon size={14} />
         </Button>
-        <span style={{ fontSize: 11, color: colors.textFaint }}>/ Мои цели</span>
+        <span style={{
+          fontSize:      10.5,
+          letterSpacing: '1.6px',
+          textTransform: 'uppercase',
+          color:         colors.textGhost,
+        }}>
+          Мои цели · {goal.category}
+        </span>
       </div>
 
       {/* Hero */}
-      <div style={{ background: colors.surface, border: `1px solid ${colors.border}`, borderRadius: 20, padding: '22px 20px', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 20 }}>
-        <ProgressRing progress={goal.progress} size={90} color={goal.color} fontSize={14} />
-        <div>
-          <Badge>{goal.category}</Badge>
-          <h1 style={{ fontSize: 21, fontWeight: 500, fontFamily: fonts.serif, margin: '8px 0 4px', lineHeight: 1.2 }}>
+      <StripeCard stripe={goal.color} style={{
+        background:   `linear-gradient(135deg, ${goal.color}10 0%, ${colors.surface} 60%)`,
+        padding:      '26px 26px',
+        marginBottom: 14,
+        display:      'flex',
+        alignItems:   'center',
+        gap:          26,
+      }}>
+        <GoldTexture opacity={0.025} />
+        <ProgressRing progress={goal.progress} size={108} strokeWidth={6} color={goal.color} fontSize={16} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+            <EyebrowLabel color={goal.color}>{goal.category}</EyebrowLabel>
+            {goal.level && (
+              <span style={{
+                fontSize:      9.5,
+                fontFamily:    fonts.mono,
+                color:         goal.color,
+                background:    `${goal.color}1A`,
+                padding:       '3px 7px',
+                borderRadius:  4,
+                letterSpacing: '0.5px',
+              }}>
+                {goal.level}
+              </span>
+            )}
+          </div>
+          <h1 style={{
+            fontSize:      26,
+            fontWeight:    500,
+            fontFamily:    fonts.serif,
+            margin:        '0 0 6px',
+            lineHeight:    1.15,
+            letterSpacing: '-0.005em',
+          }}>
             {goal.title}
           </h1>
-          <p style={{ fontSize: 13, color: colors.textFaint }}>{goal.daysLeft} дней до дедлайна</p>
+          <p style={{ fontSize: 13, color: colors.textMuted }}>
+            <span style={{ fontFamily: fonts.serif, fontStyle: 'italic', fontSize: 16, color: goal.color }}>
+              {goal.daysLeft}
+            </span> дней до дедлайна
+          </p>
         </div>
-      </div>
+      </StripeCard>
 
       {/* Next action */}
-      <div style={{ background: 'rgba(232,153,48,0.07)', border: `1px solid rgba(232,153,48,0.17)`, borderRadius: radius.lg, padding: '13px 16px', marginBottom: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10 }}>
+      <div style={{
+        background:   'rgba(232,153,48,0.07)',
+        border:       `1px solid ${colors.accentBorder}`,
+        borderRadius: radius.lg,
+        padding:      '14px 18px',
+        marginBottom: 28,
+        display:      'flex',
+        justifyContent: 'space-between',
+        alignItems:   'center',
+        gap:          10,
+      }}>
         <div>
-          <div style={{ fontSize: 10, color: colors.accent, fontWeight: 500, marginBottom: 3 }}>Следующий шаг</div>
-          <div style={{ fontSize: 13, color: colors.text, fontFamily: fonts.sans }}>{goal.nextAction}</div>
+          <EyebrowLabel color={colors.accent}>Следующий шаг</EyebrowLabel>
+          <div style={{ fontSize: 13.5, color: colors.text, fontFamily: fonts.sans, marginTop: 4 }}>
+            {goal.nextAction}
+            {goal.nextDuration && (
+              <span style={{
+                fontSize:      11,
+                color:         colors.textFaint,
+                fontFamily:    fonts.mono,
+                marginLeft:    8,
+              }}>≈ {goal.nextDuration}</span>
+            )}
+          </div>
         </div>
         <Button
           size="sm"
@@ -117,8 +193,8 @@ export const GoalDetailScreen: React.FC = () => {
       </div>
 
       {/* Milestones */}
-      <p style={{ fontSize: 12, fontWeight: 500, color: 'rgba(237,232,223,0.45)', marginBottom: 14 }}>Вехи</p>
-      <div style={{ marginBottom: 22 }}>
+      <EyebrowLabel>Вехи · {goal.milestones.filter(m=>m.done).length} из {goal.milestones.length}</EyebrowLabel>
+      <div style={{ marginTop: 18, marginBottom: 28 }}>
         {goal.milestones.map((m, i) => (
           <MilestoneItem
             key={m.id}
@@ -131,9 +207,9 @@ export const GoalDetailScreen: React.FC = () => {
 
       {/* AI analysis */}
       <AiInsight
-        text="Ты занимаешься стабильно — молодец. При текущем темпе достигнешь цели на 12 дней раньше срока."
-        color={colors.teal}
-        label="Анализ ИИ"
+        text={<>Ты занимаешься стабильно — молодец. При текущем темпе достигнешь цели на <span style={{ color: colors.accent, fontStyle: 'normal', fontWeight: 600 }}>12 дней раньше</span> срока.</>}
+        color={colors.accent}
+        label="Анализ ИИ · 2 мин назад"
       />
     </div>
   )

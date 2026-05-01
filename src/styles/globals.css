@@ -33,3 +33,130 @@ html, body, #root {
 button { cursor: pointer; }
 input, textarea { outline: none; }
 textarea { resize: none; }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Responsive — tablet
+   ───────────────────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .landing-nav-links { display: none !important; }
+
+  .hero-section {
+    gap: 40px !important;
+    padding: 56px 28px 48px !important;
+  }
+
+  .home-hero-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .home-bottom-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .goal-card {
+    grid-template-columns: 48px 1fr 120px 72px !important;
+    gap: 16px !important;
+  }
+
+  .goal-card .goal-card-timeline { display: none !important; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Responsive — mobile
+   ───────────────────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .landing-nav {
+    padding: 14px 20px !important;
+  }
+
+  .hero-section {
+    padding: 44px 20px 40px !important;
+    gap: 32px !important;
+    text-align: left;
+  }
+
+  .hero-section h2,
+  .features-section h2,
+  .how-section h2,
+  .cta-section h2 {
+    font-size: 34px !important;
+  }
+
+  .app-preview {
+    flex: 1 1 auto !important;
+    width: 100%;
+  }
+
+  .features-section,
+  .how-section,
+  .cta-section {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .how-grid {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
+  }
+
+  .how-line { display: none !important; }
+
+  .cta-section > div {
+    padding: 36px 22px !important;
+  }
+
+  /* Dashboard — collapse sidebar to horizontal rail */
+  .dashboard-sidebar {
+    width: 100% !important;
+    height: auto !important;
+    position: relative !important;
+    flex-direction: row !important;
+    overflow-x: auto;
+    padding: 12px 16px !important;
+    gap: 12px;
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .dashboard-sidebar > div,
+  .dashboard-sidebar > nav {
+    flex-shrink: 0;
+  }
+  .dashboard-sidebar nav {
+    flex-direction: row !important;
+  }
+
+  /* Parent layout stacks */
+  .dashboard-root {
+    flex-direction: column !important;
+  }
+
+  .home-topbar {
+    padding: 14px 20px !important;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .home-search {
+    width: 100% !important;
+    order: 2;
+  }
+  .home-content {
+    padding: 20px !important;
+  }
+  .home-content h2 { font-size: 30px !important; }
+
+  .goal-card {
+    grid-template-columns: 44px 1fr !important;
+    grid-template-rows: auto auto;
+    gap: 12px 14px !important;
+    padding: 14px 16px !important;
+  }
+  .goal-card-next {
+    grid-column: 1 / -1;
+    padding-top: 4px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+}
