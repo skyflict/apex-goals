@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useAppDispatch }  from '@/hooks/useAppDispatch'
 import { useAppSelector }  from '@/hooks/useAppSelector'
 import { setDashboardTab } from '@/store/slices/uiSlice'
@@ -21,6 +21,13 @@ export const Sidebar: React.FC = () => {
   const activeTab    = useAppSelector(s => s.ui.dashboardTab)
   const user         = useAppSelector(s => s.auth.user)
   const goals        = useAppSelector(s => s.goals.goals)
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const handleNavClick = (id: DashboardTab | string, selectable: boolean) => {
+    if (!selectable) return
+    dispatch(setDashboardTab(id as DashboardTab))
+    setMenuOpen(false)
+  }
 
   return (
     <aside style={{
@@ -34,7 +41,7 @@ export const Sidebar: React.FC = () => {
       height:       '100vh',
       position:     'sticky',
       top:          0,
-    }} className="dashboard-sidebar">
+    }} className={`dashboard-sidebar${menuOpen ? ' is-menu-open' : ''}`}>
       {/* Logo */}
       <div style={{ padding: '0 8px 28px' }}>
         <div style={{
@@ -49,18 +56,30 @@ export const Sidebar: React.FC = () => {
         </EyebrowLabel>
       </div>
 
+      <button
+        type="button"
+        className="dashboard-menu-button"
+        aria-label={menuOpen ? 'Закрыть меню' : 'Открыть меню'}
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen(open => !open)}
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+
       <EyebrowLabel size={9.5} spacing="1.5px" style={{ padding: '0 12px 10px' }}>
         Навигация
       </EyebrowLabel>
 
-      <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <nav className="dashboard-nav" style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {NAV.map(({ id, label }) => {
           const active = activeTab === id
           const selectable = ['home', 'new', 'detail'].includes(id as string)
           return (
             <button
               key={id}
-              onClick={() => selectable && dispatch(setDashboardTab(id as DashboardTab))}
+              onClick={() => handleNavClick(id, selectable)}
               style={{
                 display:     'flex',
                 alignItems:  'center',

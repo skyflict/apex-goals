@@ -49,6 +49,9 @@ const goalsSlice = createSlice({
     resetChat(state) {
       state.chatMessages = INITIAL_CHAT
     },
+    clearChat(state) {
+      state.chatMessages = []
+    },
   },
 })
 
@@ -60,6 +63,7 @@ export const {
   completeMilestone,
   addChatMessage,
   resetChat,
+  clearChat,
 } = goalsSlice.actions
 
 export default goalsSlice.reducer

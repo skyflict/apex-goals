@@ -35,7 +35,18 @@ export interface GoalPlan {
   title: string
   deadline: string
   pace: string
-  steps: string[]
+  overview?: string
+  steps: Array<string | GoalPlanStep>
+  weeklyPlan?: string[]
+  risks?: string[]
+  successCriteria?: string[]
+}
+
+export interface GoalPlanStep {
+  title: string
+  why?: string
+  actions: string[]
+  result?: string
 }
 
 export interface ChatMessage {
