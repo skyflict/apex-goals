@@ -27,6 +27,14 @@ const goalsSlice = createSlice({
     addGoal(state, action: PayloadAction<Goal>) {
       state.goals.push(action.payload)
     },
+    setGoals(state, action: PayloadAction<Goal[]>) {
+      state.goals = action.payload
+    },
+    clearGoals(state) {
+      state.goals = []
+      state.selectedGoalId = null
+      state.chatMessages = []
+    },
     updateProgress(state, action: PayloadAction<{ id: string; progress: number }>) {
       const goal = state.goals.find(g => g.id === action.payload.id)
       if (goal) goal.progress = action.payload.progress
@@ -59,6 +67,8 @@ export const {
   selectGoal,
   clearSelectedGoal,
   addGoal,
+  setGoals,
+  clearGoals,
   updateProgress,
   completeMilestone,
   addChatMessage,

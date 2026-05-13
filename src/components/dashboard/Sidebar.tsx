@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { useAppDispatch }  from '@/hooks/useAppDispatch'
 import { useAppSelector }  from '@/hooks/useAppSelector'
-import { setDashboardTab } from '@/store/slices/uiSlice'
+import { setDashboardTab, setScreen } from '@/store/slices/uiSlice'
 import { EyebrowLabel }    from '@/components/ui'
 import { colors, fonts, radius } from '@/styles/theme'
+import { signOutUser }     from '@/services/auth'
 import type { DashboardTab } from '@/types'
 
 interface NavItem { id: DashboardTab | string; label: string; active?: boolean }
@@ -12,8 +13,6 @@ const NAV: NavItem[] = [
   { id: 'home',   label: 'Дашборд'     },
   { id: 'new',    label: 'Новая цель'  },
   { id: 'detail', label: 'Прогресс'    },
-  { id: 'cal',    label: 'Календарь'   },
-  { id: 'chat',   label: 'Чат с ИИ'    },
 ]
 
 export const Sidebar: React.FC = () => {
@@ -136,12 +135,20 @@ export const Sidebar: React.FC = () => {
       <div style={{ flex: 1 }}/>
 
       {/* User chip */}
-      <div style={{
+      <button
+        type="button"
+        onClick={() => {
+          void signOutUser().then(() => dispatch(setScreen('auth')))
+        }}
+        title="Выйти"
+        style={{
         display: 'flex', alignItems: 'center', gap: 10,
         padding: '10px 12px',
         background: 'rgba(255,255,255,0.03)',
         border: `1px solid ${colors.border}`,
         borderRadius: radius.lg,
+        fontFamily: fonts.sans,
+        textAlign: 'left',
       }}>
         <div style={{
           width: 32, height: 32, borderRadius: '50%',
@@ -162,7 +169,7 @@ export const Sidebar: React.FC = () => {
           </div>
         </div>
         <div style={{ fontSize: 12, color: colors.textFaint }}>⋯</div>
-      </div>
+      </button>
     </aside>
   )
 }

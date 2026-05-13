@@ -5,8 +5,10 @@ export type DashboardTab = 'home' | 'new' | 'detail'
 
 // ─── Domain ──────────────────────────────────────────────────────────────────
 export interface User {
+  uid: string
   name: string
   email: string
+  photoURL?: string | null
 }
 
 export interface Milestone {

@@ -1,12 +1,27 @@
 import React, { useState } from 'react'
 import { useAppDispatch }  from '@/hooks/useAppDispatch'
 import { useAppSelector }  from '@/hooks/useAppSelector'
-import { login, setAuthTab } from '@/store/slices/authSlice'
+import { setAuthTab, setUser } from '@/store/slices/authSlice'
 import { setScreen }         from '@/store/slices/uiSlice'
 import { Button }            from '@/components/ui/Button'
 import { Input }             from '@/components/ui'
 import { BackIcon }          from '@/components/icons'
 import { colors, fonts, radius } from '@/styles/theme'
+import {
+  createAccountWithEmail,
+  signInWithApple,
+  signInWithEmail,
+  signInWithGoogle,
+} from '@/services/auth'
+import type { User } from '@/types'
+
+const authErrorMessage = (err: unknown) => {
+  if (!(err instanceof Error)) return 'Не удалось войти. Попробуй ещё раз.'
+  if (err.message.includes('Invalid login credentials')) return 'Неверный email или пароль.'
+  if (err.message.includes('User already registered')) return 'Аккаунт с таким email уже есть.'
+  if (err.message.includes('Password should be')) return 'Пароль должен быть не короче 6 символов.'
+  return err.message
+}
 
 export const AuthScreen: React.FC = () => {
   const dispatch  = useAppDispatch()
@@ -15,10 +30,34 @@ export const AuthScreen: React.FC = () => {
   const [name,     setName]     = useState('')
   const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
+  const [error,    setError]    = useState('')
+  const [loading,  setLoading]  = useState(false)
+
+  const runAuth = async (action: () => Promise<User | null>) => {
+    setError('')
+    setLoading(true)
+    try {
+      const user = await action()
+      if (user) {
+        dispatch(setUser(user))
+        dispatch(setScreen('dashboard'))
+      }
+    } catch (err) {
+      setError(authErrorMessage(err))
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleSubmit = () => {
-    dispatch(login({ name: name || 'Никита', email: email || 'user@apex.ai' }))
-    dispatch(setScreen('dashboard'))
+    if (!email.trim() || !password.trim()) {
+      setError('Укажи email и пароль.')
+      return
+    }
+
+    void runAuth(() => activeTab === 'login'
+      ? signInWithEmail(email.trim(), password)
+      : createAccountWithEmail(name.trim(), email.trim(), password))
   }
 
   return (
@@ -74,9 +113,32 @@ export const AuthScreen: React.FC = () => {
             <Input label="Email" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} />
             <Input label="Пароль" type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} />
 
-            <Button fullWidth size="md" style={{ marginTop: 6 }} onClick={handleSubmit}>
-              {activeTab === 'login' ? 'Войти в Apex' : 'Создать аккаунт'}
+            {error && (
+              <div style={{
+                border:       `1px solid ${colors.accentBorder}`,
+                background:   'rgba(232,153,48,0.08)',
+                borderRadius: radius.md,
+                color:        colors.text,
+                fontSize:     12,
+                lineHeight:   1.5,
+                padding:      '9px 11px',
+              }}>
+                {error}
+              </div>
+            )}
+
+            <Button fullWidth size="md" style={{ marginTop: 6 }} onClick={handleSubmit} disabled={loading}>
+              {loading ? 'Входим...' : activeTab === 'login' ? 'Войти в Apex' : 'Создать аккаунт'}
             </Button>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9 }}>
+              <Button variant="ghost" size="sm" onClick={() => void runAuth(signInWithGoogle)} disabled={loading}>
+                Google
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => void runAuth(signInWithApple)} disabled={loading}>
+                Apple
+              </Button>
+            </div>
 
             <Button
               variant="text"

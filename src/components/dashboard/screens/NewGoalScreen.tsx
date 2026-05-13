@@ -7,8 +7,9 @@ import { Button }                             from '@/components/ui/Button'
 import { BackIcon, SparkIcon }                from '@/components/icons'
 import { colors, fonts, radius }              from '@/styles/theme'
 import { generateGoalPlan }                   from '@/services/ai'
+import { saveGoalPlan, saveUserGoal }         from '@/services/goalsRepository'
 import type { GoalResponse }                  from '@/services/ai'
-import type { GoalPlan, GoalPlanStep }        from '@/types'
+import type { Goal, GoalPlan, GoalPlanStep }  from '@/types'
 
 const TIMELINE_OPTIONS = [
   { value: 'день', label: 'День' },
@@ -396,6 +397,7 @@ const GoalForm: React.FC<GoalFormProps> = ({ onSubmit, disabled }) => {
 export const NewGoalScreen: React.FC = () => {
   const dispatch   = useAppDispatch()
   const messages   = useAppSelector(s => s.goals.chatMessages)
+  const user       = useAppSelector(s => s.auth.user)
   const [isLoading,     setIsLoading]     = useState(false)
   const [lastResponse,  setLastResponse]  = useState<GoalResponse | null>(null)
   const bottomRef  = useRef<HTMLDivElement>(null)
@@ -417,6 +419,12 @@ export const NewGoalScreen: React.FC = () => {
     try {
       const result = await generateGoalPlan(want, have, timeline)
       setLastResponse(result)
+      if (user) {
+        void saveGoalPlan(user.uid, {
+          input: { want, have, timeline },
+          response: result,
+        }).catch(err => console.error('Failed to save goal plan', err))
+      }
       dispatch(addChatMessage({ id: `ai-${Date.now()}`,   role: 'ai',  text: result.acknowledgment }))
       dispatch(addChatMessage({ id: `plan-${Date.now()}`, role: 'plan', plan: result.plan }))
     } catch (err) {
@@ -427,12 +435,12 @@ export const NewGoalScreen: React.FC = () => {
     }
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const planMsg = messages.find(m => m.role === 'plan')
     if (!planMsg?.plan) return
 
-    dispatch(addGoal({
-      id:         Date.now().toString(),
+    const goal: Goal = {
+      id:         crypto.randomUUID(),
       title:      planMsg.plan.title,
       progress:   0,
       daysLeft:   90,
@@ -446,7 +454,14 @@ export const NewGoalScreen: React.FC = () => {
         done:    false,
         current: i === 0,
       })),
-    }))
+    }
+
+    if (user) {
+      await saveUserGoal(user.uid, goal)
+        .catch(err => console.error('Failed to save goal', err))
+    }
+
+    dispatch(addGoal(goal))
     dispatch(setDashboardTab('home'))
   }
 

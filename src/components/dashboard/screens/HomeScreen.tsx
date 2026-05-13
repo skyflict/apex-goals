@@ -15,8 +15,8 @@ import {
   GoldTexture,
 } from '@/components/ui'
 import { GoalCard }        from '@/components/dashboard/GoalCard'
-import { WEEK_RHYTHM }     from '@/constants/data'
 import { colors, fonts, radius } from '@/styles/theme'
+import type { WeekDay }    from '@/components/ui'
 
 export const HomeScreen: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -26,7 +26,33 @@ export const HomeScreen: React.FC = () => {
   const avgProgress = goals.length
     ? Math.round(goals.reduce((a, g) => a + g.progress, 0) / goals.length)
     : 0
-  const streak = 18
+  const completedGoals = goals.filter(g => g.progress >= 100).length
+  const activeGoals = goals.filter(g => g.progress < 100).length
+  const completedMilestones = goals.reduce((sum, goal) => (
+    sum + goal.milestones.filter(m => m.done).length
+  ), 0)
+  const totalMilestones = goals.reduce((sum, goal) => sum + goal.milestones.length, 0)
+  const currentGoal = goals.find(g => g.milestones.some(m => m.current)) ?? goals[0]
+  const currentMilestone = currentGoal?.milestones.find(m => m.current)
+  const streak = goals.reduce((max, goal) => Math.max(max, goal.streak ?? 0), 0)
+  const nearestDeadline = goals.length
+    ? Math.min(...goals.map(goal => goal.daysLeft))
+    : 0
+  const progressLabel = goals.length
+    ? avgProgress >= 70
+      ? 'Темп высокий'
+      : avgProgress >= 35
+        ? 'План набирает ход'
+        : 'Стартовый этап'
+    : 'Пока нет целей'
+  const progressText = goals.length
+    ? avgProgress >= 70
+      ? 'Большая часть пути уже закрыта. Сейчас важнее удержать ритм и не распыляться на новые задачи.'
+      : avgProgress >= 35
+        ? `Следующий фокус: ${currentGoal?.nextAction ?? 'выбрать ближайшее действие'}`
+        : 'Создай первую цель и сохрани AI-план — дашборд начнёт считать прогресс автоматически.'
+    : 'Добавь цель через AI-коуча, и здесь появятся прогресс, ближайшее действие и история движения.'
+  const weekRhythm = buildWeekRhythm(completedMilestones, totalMilestones)
 
   const today = new Date().toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' })
 
@@ -83,7 +109,7 @@ export const HomeScreen: React.FC = () => {
             Добрый день, <Em>{user?.name ?? 'Никита'}</Em>
           </SerifHeading>
           <div style={{ fontSize: 14, color: colors.textMuted, marginTop: 8, fontFamily: fonts.sans }}>
-            {goals.length} активные цели — ты опережаешь график на 4 дня.
+            {activeGoals} активные цели · {completedMilestones} из {totalMilestones} этапов закрыто.
           </div>
         </div>
 
@@ -129,19 +155,19 @@ export const HomeScreen: React.FC = () => {
                 fontFamily: fonts.serif, fontSize: 22, fontWeight: 400,
                 color: colors.text, lineHeight: 1.2, marginBottom: 4,
               }}>
-                Ты впереди графика на <Em>4 дня</Em>
+                {progressLabel}: <Em>{avgProgress}%</Em>
               </div>
               <div style={{ fontSize: 12.5, color: colors.textMuted, lineHeight: 1.5, fontFamily: fonts.sans }}>
-                Сохраняй текущий темп — и полумарафон случится на 12 дней раньше срока.
+                {progressText}
               </div>
             </div>
           </div>
 
           {/* Stats column */}
           <div style={{ display: 'grid', gridTemplateRows: 'repeat(3, 1fr)', gap: 8 }}>
-            <StatCard label="Активных целей" value={goals.length}   sub="в работе"       color={colors.accent} />
-            <StatCard label="Задач за неделю" value={14}             sub="+3 к прошлой"    color={colors.teal}   />
-            <StatCard label="Текущая серия"   value={streak}         sub="дней подряд"    color={colors.purple} />
+            <StatCard label="Активных целей" value={activeGoals} sub={`${completedGoals} завершено`} color={colors.accent} />
+            <StatCard label="Этапов закрыто" value={completedMilestones} sub={`из ${totalMilestones || 0} в планах`} color={colors.teal} />
+            <StatCard label="Ближайший срок" value={nearestDeadline || '—'} sub={goals.length ? 'дней осталось' : 'создай цель'} color={colors.purple} />
           </div>
         </div>
 
@@ -159,18 +185,39 @@ export const HomeScreen: React.FC = () => {
           <div style={{ display: 'flex', gap: 14, fontSize: 12, color: colors.textMuted, fontFamily: fonts.sans }}>
             <div>Все · <b style={{ color: colors.text }}>{goals.length}</b></div>
             <div style={{ color: colors.textGhost }}>·</div>
-            <div>Завершённые · 7</div>
+            <div>Завершённые · {completedGoals}</div>
           </div>
         </div>
 
         {/* Goal rows */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-          {goals.map(g => (
-            <GoalCard key={g.id} goal={g} onClick={() => handleGoalClick(g.id)} />
-          ))}
+          {goals.length ? (
+            goals.map(g => (
+              <GoalCard key={g.id} goal={g} onClick={() => handleGoalClick(g.id)} />
+            ))
+          ) : (
+            <div style={{
+              border:       `1px solid ${colors.border}`,
+              background:   colors.surface,
+              borderRadius: radius.xl,
+              padding:      '22px',
+              display:      'flex',
+              justifyContent: 'space-between',
+              alignItems:   'center',
+              gap:          16,
+            }}>
+              <div>
+                <div style={{ fontSize: 16, color: colors.text, marginBottom: 5 }}>Целей пока нет</div>
+                <div style={{ fontSize: 13, color: colors.textMuted, lineHeight: 1.5 }}>
+                  Создай первую цель, и она появится здесь вместе с прогрессом, этапами и ближайшим действием.
+                </div>
+              </div>
+              <Button size="sm" onClick={() => dispatch(setDashboardTab('new'))}>Создать</Button>
+            </div>
+          )}
         </div>
 
-        {/* Insight + Week rhythm */}
+        {/* Insight + rhythm */}
         <div className="home-bottom-row" style={{
           display: 'grid',
           gridTemplateColumns: '1.2fr 1fr',
@@ -179,26 +226,58 @@ export const HomeScreen: React.FC = () => {
         }}>
           <AiInsight
             serif
-            label="Инсайт от ИИ · 2 мин назад"
+            label="Инсайт от ИИ"
             text={
               <>
-                Ты отстаёшь по испанскому на 3 урока. Занимайся{' '}
-                <span style={{ color: colors.accent, fontStyle: 'normal', fontFamily: fonts.sans, fontWeight: 500 }}>
-                  40 мин/день
-                </span>{' '}
-                вместо 20 на этой неделе — и вернёшься в график.
+                {currentGoal ? (
+                  <>
+                    Ближайший фокус: <span style={{ color: colors.accent, fontStyle: 'normal', fontFamily: fonts.sans, fontWeight: 500 }}>
+                      {currentMilestone?.text ?? currentGoal.nextAction}
+                    </span>. Это продвинет цель «{currentGoal.title}» без лишнего планирования.
+                  </>
+                ) : (
+                  <>
+                    Опиши первую цель, текущие ресурсы и срок. AI соберёт план, а дашборд начнёт показывать реальную историю прогресса.
+                  </>
+                )}
+                {/* spacing */}
+                {' '}
+                {currentGoal && currentGoal.nextDuration && (
+                  <>
+                    Рекомендуемый слот:{' '}
+                    <span style={{ color: colors.accent, fontStyle: 'normal', fontFamily: fonts.sans, fontWeight: 500 }}>
+                      {currentGoal.nextDuration}
+                    </span>.
+                  </>
+                )}
               </>
             }
             actions={
-              <>
-                <Button size="sm">Принять план</Button>
-                <Button size="sm" variant="ghost">Отложить</Button>
-              </>
+              <Button size="sm" onClick={() => dispatch(setDashboardTab(currentGoal ? 'detail' : 'new'))}>
+                {currentGoal ? 'Открыть цель' : 'Создать цель'}
+              </Button>
             }
           />
-          <WeekRhythm days={WEEK_RHYTHM} summary="14 / 18 задач" />
+          <WeekRhythm
+            days={weekRhythm}
+            summary={`${completedMilestones} / ${totalMilestones || 0} этапов`}
+          />
         </div>
       </div>
     </div>
   )
+}
+
+const buildWeekRhythm = (completed: number, total: number): WeekDay[] => {
+  const labels = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+  const today = new Date().getDay()
+  const todayIndex = today === 0 ? 6 : today - 1
+  const percent = total ? Math.max(10, Math.round((completed / total) * 100)) : 8
+
+  return labels.map((day, index) => ({
+    day,
+    value: index <= todayIndex ? Math.min(100, percent + index * 4) : 12,
+    done: index < todayIndex && completed > 0,
+    today: index === todayIndex,
+  }))
 }
