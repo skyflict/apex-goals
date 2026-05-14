@@ -24,7 +24,7 @@ export async function generateGoalPlan(
       'Authorization': `Bearer ${apiKey}`,
       'content-type':  'application/json',
       'HTTP-Referer':  'http://localhost:5173',
-      'X-Title':       'Apex Goals',
+      'X-Title':       'Planika Goals',
     },
     body: JSON.stringify({
       model: 'openai/gpt-4o',
@@ -32,7 +32,7 @@ export async function generateGoalPlan(
       messages: [
         {
           role: 'system',
-          content: `Ты — AI-коуч приложения Apex для постановки и достижения целей. Отвечай строго в формате JSON без markdown.
+          content: `Ты — AI-коуч приложения Planika для постановки и достижения целей. Отвечай строго в формате JSON без markdown.
 
 Составляй подробный, практичный и персональный план. Не ограничивайся общими фразами. Учитывай цель, текущие ресурсы пользователя и выбранный срок.
 Пиши на русском, дружелюбно, но конкретно. Каждый шаг должен быть применимым: что делать, зачем делать и какой результат считать готовым.

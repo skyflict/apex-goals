@@ -1,6 +1,30 @@
 import React from 'react'
 import { colors, fonts, radius } from '@/styles/theme'
 
+// ─── BrandLogo ────────────────────────────────────────────────────────────────
+interface BrandLogoProps {
+  size?: number
+  style?: React.CSSProperties
+}
+
+export const BrandLogo: React.FC<BrandLogoProps> = ({ size = 24, style }) => (
+  <span
+    aria-label="Planika"
+    style={{
+      fontSize:      size,
+      fontWeight:    400,
+      color:         colors.text,
+      letterSpacing: '1.2px',
+      fontFamily:    fonts.serif,
+      fontStyle:     'italic',
+      lineHeight:    1,
+      ...style,
+    }}
+  >
+    Pl<span style={{ color: colors.accent }}>a</span>n<span style={{ color: colors.accent }}>i</span>ka
+  </span>
+)
+
 // ─── ProgressRing ─────────────────────────────────────────────────────────────
 interface ProgressRingProps {
   progress:     number   // 0–100

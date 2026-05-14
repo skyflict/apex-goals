@@ -101,7 +101,7 @@ export const HomeScreen: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="home-content" style={{ padding: '28px 40px 60px', maxWidth: 1120, position: 'relative' }}>
+      <div className="home-content" style={{ padding: '28px 40px 60px', maxWidth: 1120, margin: '0 auto', position: 'relative' }}>
         {/* Greeting */}
         <div style={{ marginBottom: 24 }}>
           <EyebrowLabel style={{ marginBottom: 8 }}>{today}</EyebrowLabel>

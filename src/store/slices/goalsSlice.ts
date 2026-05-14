@@ -49,6 +49,11 @@ const goalsSlice = createSlice({
         // mark next milestone as current
         const next = goal.milestones.find(m => !m.done && !m.current)
         if (next) next.current = true
+        const doneCount = goal.milestones.filter(m => m.done).length
+        goal.progress = goal.milestones.length
+          ? Math.round((doneCount / goal.milestones.length) * 100)
+          : 0
+        goal.nextAction = next?.text ?? 'Цель завершена'
       }
     },
     addChatMessage(state, action: PayloadAction<ChatMessage>) {

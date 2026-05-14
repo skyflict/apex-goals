@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useAppDispatch }  from '@/hooks/useAppDispatch'
 import { useAppSelector }  from '@/hooks/useAppSelector'
 import { setDashboardTab, setScreen } from '@/store/slices/uiSlice'
-import { EyebrowLabel }    from '@/components/ui'
+import { BrandLogo, EyebrowLabel } from '@/components/ui'
 import { colors, fonts, radius } from '@/styles/theme'
 import { signOutUser }     from '@/services/auth'
 import type { DashboardTab } from '@/types'
@@ -43,13 +43,7 @@ export const Sidebar: React.FC = () => {
     }} className={`dashboard-sidebar${menuOpen ? ' is-menu-open' : ''}`}>
       {/* Logo */}
       <div style={{ padding: '0 8px 28px' }}>
-        <div style={{
-          fontFamily: fonts.serif, fontStyle: 'italic',
-          fontSize: 26, color: colors.accent,
-          letterSpacing: '1.5px', lineHeight: 1,
-        }}>
-          Apex
-        </div>
+        <BrandLogo size={26} />
         <EyebrowLabel size={9.5} spacing="2px" style={{ marginTop: 4 }}>
           цели с ИИ
         </EyebrowLabel>

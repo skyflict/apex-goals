@@ -4,14 +4,12 @@ import { useAppSelector }  from '@/hooks/useAppSelector'
 import { setAuthTab, setUser } from '@/store/slices/authSlice'
 import { setScreen }         from '@/store/slices/uiSlice'
 import { Button }            from '@/components/ui/Button'
-import { Input }             from '@/components/ui'
+import { BrandLogo, Input }  from '@/components/ui'
 import { BackIcon }          from '@/components/icons'
 import { colors, fonts, radius } from '@/styles/theme'
 import {
   createAccountWithEmail,
-  signInWithApple,
   signInWithEmail,
-  signInWithGoogle,
 } from '@/services/auth'
 import type { User } from '@/types'
 
@@ -73,8 +71,8 @@ export const AuthScreen: React.FC = () => {
           <BackIcon size={14} /> Назад
         </Button>
 
-        <div style={{ fontSize: 22, fontWeight: 500, color: colors.accent, letterSpacing: '1.5px', fontFamily: fonts.serif, marginBottom: 2 }}>
-          Apex
+        <div style={{ marginBottom: 2 }}>
+          <BrandLogo size={22} />
         </div>
         <div style={{ fontSize: 12, color: colors.textFaint, marginBottom: 28 }}>цели с ИИ</div>
 
@@ -128,17 +126,8 @@ export const AuthScreen: React.FC = () => {
             )}
 
             <Button fullWidth size="md" style={{ marginTop: 6 }} onClick={handleSubmit} disabled={loading}>
-              {loading ? 'Входим...' : activeTab === 'login' ? 'Войти в Apex' : 'Создать аккаунт'}
+              {loading ? 'Входим...' : activeTab === 'login' ? 'Войти в Planika' : 'Создать аккаунт'}
             </Button>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 9 }}>
-              <Button variant="ghost" size="sm" onClick={() => void runAuth(signInWithGoogle)} disabled={loading}>
-                Google
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => void runAuth(signInWithApple)} disabled={loading}>
-                Apple
-              </Button>
-            </div>
 
             <Button
               variant="text"

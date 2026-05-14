@@ -9,6 +9,7 @@ import {
   SerifHeading,
   Em,
   GoldTexture,
+  BrandLogo,
 } from '@/components/ui'
 import { SparkIcon, TargetIcon, ChartIcon } from '@/components/icons'
 import { colors, fonts, radius } from '@/styles/theme'
@@ -36,13 +37,7 @@ export const LandingNav: React.FC = () => {
       zIndex:        50,
     }} className="landing-nav">
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
-        <div style={{
-          fontSize: 24, fontWeight: 400, color: colors.accent,
-          letterSpacing: '1.5px', fontFamily: fonts.serif, fontStyle: 'italic',
-          lineHeight: 1,
-        }}>
-          Apex
-        </div>
+        <BrandLogo size={24} />
         <div style={{
           fontSize: 9.5, letterSpacing: '2px', textTransform: 'uppercase',
           color: colors.textGhost, fontFamily: fonts.sans,
@@ -52,11 +47,16 @@ export const LandingNav: React.FC = () => {
       </div>
 
       <div className="landing-nav-links" style={{ display: 'flex', gap: 28 }}>
-        {['Возможности', 'Как работает', 'Отзывы', 'Тарифы'].map(l => (
-          <a key={l} href="#" style={{
+        {[
+          { label: 'Возможности', href: '#features' },
+          { label: 'Как работает', href: '#how' },
+          { label: 'Отзывы', href: '#reviews' },
+          { label: 'Тарифы', href: '#pricing' },
+        ].map(l => (
+          <a key={l.label} href={l.href} style={{
             fontSize: 12.5, color: colors.textMuted, textDecoration: 'none',
             letterSpacing: '0.2px', fontFamily: fonts.sans,
-          }}>{l}</a>
+          }}>{l.label}</a>
         ))}
       </div>
 
@@ -77,11 +77,11 @@ const PREVIEW_GOALS = [
 
 export const AppPreview: React.FC = () => (
   <div style={{
-    flex:         '0 0 340px',
+    flex:         '0 0 420px',
     background:   colors.surface,
     border:       `1px solid ${colors.borderStrong}`,
     borderRadius: radius.xxl,
-    padding:      20,
+    padding:      24,
     position:     'relative',
     overflow:     'hidden',
     boxShadow:    '0 30px 80px -30px rgba(0,0,0,0.6), 0 10px 30px -10px rgba(232,153,48,0.08)',
@@ -93,16 +93,16 @@ export const AppPreview: React.FC = () => (
       background:  `linear-gradient(135deg, rgba(232,153,48,0.1), ${colors.deepCard})`,
       border:      `1px solid ${colors.accentBorder}`,
       borderRadius: radius.lg,
-      padding:     '12px 14px',
+      padding:     '16px 18px',
       display:     'flex',
       alignItems:  'center',
       gap:         14,
-      marginBottom:12,
+      marginBottom:14,
       position:    'relative',
     }}>
-      <ProgressRing progress={45} size={52} strokeWidth={4} color={colors.accent} trackColor="rgba(232,153,48,0.12)">
+      <ProgressRing progress={45} size={64} strokeWidth={5} color={colors.accent} trackColor="rgba(232,153,48,0.12)">
         <span style={{
-          fontFamily: fonts.serif, fontSize: 18, fontStyle: 'italic',
+          fontFamily: fonts.serif, fontSize: 22, fontStyle: 'italic',
           color: colors.accent, fontWeight: 500,
         }}>
           45
@@ -112,7 +112,7 @@ export const AppPreview: React.FC = () => (
         <EyebrowLabel size={8.5} spacing="1.5px" color={colors.accent} style={{ marginBottom: 3 }}>
           Средний прогресс
         </EyebrowLabel>
-        <div style={{ fontSize: 12, color: colors.text, fontFamily: fonts.serif, fontStyle: 'italic', lineHeight: 1.3 }}>
+        <div style={{ fontSize: 15, color: colors.text, fontFamily: fonts.serif, fontStyle: 'italic', lineHeight: 1.3 }}>
           Впереди графика на <span style={{ color: colors.accent }}>4 дня</span>
         </div>
       </div>
@@ -124,27 +124,27 @@ export const AppPreview: React.FC = () => (
         background:   colors.deepCard,
         border:       `1px solid ${colors.border}`,
         borderRadius: radius.md,
-        padding:      '10px 12px',
+        padding:      '13px 14px',
         display:      'flex',
         alignItems:   'center',
         gap:          11,
-        marginBottom: 5,
+        marginBottom: 7,
         position:     'relative',
         overflow:     'hidden',
       }}>
         <div style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 2, background: g.color, opacity: 0.85 }}/>
-        <ProgressRing progress={g.pct} size={34} strokeWidth={3} color={g.color}>
+        <ProgressRing progress={g.pct} size={42} strokeWidth={3.5} color={g.color}>
           <span style={{ fontSize: 9, fontFamily: fonts.mono, color: g.color }}>{g.pct}</span>
         </ProgressRing>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ fontSize: 11.5, fontWeight: 500, color: colors.text }}>{g.label}</span>
+            <span style={{ fontSize: 14, fontWeight: 500, color: colors.text }}>{g.label}</span>
             <span style={{
               fontSize: 8.5, fontFamily: fonts.mono, color: g.color,
               background: `${g.color}22`, padding: '1px 5px', borderRadius: 3,
             }}>{g.level}</span>
           </div>
-          <div style={{ fontSize: 9.5, color: colors.textFaint, marginTop: 1, fontFamily: fonts.mono }}>{g.sub}</div>
+          <div style={{ fontSize: 10.5, color: colors.textFaint, marginTop: 2, fontFamily: fonts.mono }}>{g.sub}</div>
         </div>
       </div>
     ))}
@@ -154,14 +154,14 @@ export const AppPreview: React.FC = () => (
       background:   colors.accentBg,
       border:       `1px solid ${colors.accentBorder}`,
       borderRadius: radius.md,
-      padding:      '9px 11px',
+      padding:      '12px 13px',
       display:      'flex',
       gap:          8,
       marginTop:    10,
     }}>
       <SparkIcon size={11} color={colors.accent} />
       <span style={{
-        fontSize: 10.5, color: colors.text, lineHeight: 1.5,
+        fontSize: 12, color: colors.text, lineHeight: 1.5,
         fontFamily: fonts.serif, fontStyle: 'italic',
       }}>
         Ты на <span style={{ color: colors.accent, fontStyle: 'normal', fontFamily: fonts.sans, fontWeight: 500 }}>12 дней</span> впереди графика
@@ -191,8 +191,13 @@ export const HeroSection: React.FC = () => {
     }} className="hero-section">
       {/* Aurora glow */}
       <div style={{
-        position: 'absolute', top: -100, right: -80, width: 540, height: 420,
-        background: 'radial-gradient(ellipse, rgba(232,153,48,0.12), transparent 65%)',
+        position: 'absolute', top: -130, right: -120, width: 620, height: 460,
+        background: 'radial-gradient(ellipse, rgba(232,153,48,0.18), transparent 66%)',
+        pointerEvents: 'none', zIndex: 0,
+      }}/>
+      <div style={{
+        position: 'absolute', bottom: -120, left: -160, width: 520, height: 360,
+        background: `radial-gradient(ellipse, ${colors.teal}18, transparent 65%)`,
         pointerEvents: 'none', zIndex: 0,
       }}/>
 
@@ -219,17 +224,38 @@ export const HeroSection: React.FC = () => {
         </div>
 
         <SerifHeading size={56} style={{ marginBottom: 20 }}>
-          Ставь цели.<br/>
-          ИИ поможет<br/>
-          <Em>их достичь.</Em>
+          Заполни форму.<br/>
+          ИИ соберёт<br/>
+          <Em>план цели.</Em>
         </SerifHeading>
 
         <p style={{
           fontSize: 15.5, color: colors.textMuted, lineHeight: 1.75,
           maxWidth: 440, marginBottom: 30, fontFamily: fonts.sans,
         }}>
-          Опиши цель в свободной форме — ИИ задаст вопросы, создаст персональный план и поможет не сбиться с пути.
+          Введи, чего хочешь достичь, что уже есть и срок. Planika превратит это в понятный план: этапы, ближайшее действие, темп и критерии успеха.
         </p>
+
+        <div style={{
+          display: 'grid',
+          gap: 8,
+          maxWidth: 450,
+          marginBottom: 26,
+        }}>
+          {['Цель: научиться играть на гитаре', 'Ресурсы: начинаю с нуля, 30 минут в день', 'Срок: полгода'].map(item => (
+            <div key={item} style={{
+              background: 'rgba(255,255,255,0.045)',
+              border: `1px solid ${colors.border}`,
+              borderRadius: radius.md,
+              padding: '10px 13px',
+              color: colors.textMuted,
+              fontSize: 13,
+              fontFamily: fonts.sans,
+            }}>
+              {item}
+            </div>
+          ))}
+        </div>
 
         <div style={{ display: 'flex', gap: 11, flexWrap: 'wrap', marginBottom: 28 }}>
           <Button size="md" onClick={() => goAuth('register')}>Начать бесплатно</Button>
@@ -258,7 +284,7 @@ export const HeroSection: React.FC = () => {
           </div>
           <span style={{ fontSize: 12, color: colors.textFaint, fontFamily: fonts.sans }}>
             <span style={{ color: colors.text, fontFamily: fonts.mono, fontWeight: 500 }}>1 200+</span>{' '}
-            человек достигают целей с Apex
+            человек достигают целей с Planika
           </span>
         </div>
       </div>
@@ -272,23 +298,23 @@ export const HeroSection: React.FC = () => {
 
 // ─── FeaturesSection ──────────────────────────────────────────────────────────
 const FEATURES = [
-  { n: '01', Icon: SparkIcon,  color: colors.accent,  title: 'ИИ понимает тебя',     body: 'Пишешь в свободной форме — «хочу похудеть к лету» или «запустить бизнес». ИИ задаёт вопросы и разбирается.' },
-  { n: '02', Icon: TargetIcon, color: colors.teal,    title: 'Разбивает на шаги',    body: 'Большая цель → конкретные вехи с дедлайнами. Ты всегда знаешь, что делать сегодня, а не через полгода.' },
-  { n: '03', Icon: ChartIcon,  color: colors.purple,  title: 'Адаптивный трекинг',   body: 'ИИ замечает отставания, корректирует план и подсказывает — ты достигнешь цели в любом случае.' },
+  { n: '01', Icon: SparkIcon,  color: colors.accent,  title: 'Форма без шума', body: 'Цель, ресурсы, срок — и AI сразу строит план.' },
+  { n: '02', Icon: TargetIcon, color: colors.teal,    title: 'Понятные этапы', body: 'Шаги, темп, ближайшее действие и критерии успеха.' },
+  { n: '03', Icon: ChartIcon,  color: colors.purple,  title: 'Прогресс в аккаунте', body: 'Цели сохраняются, историю и этапы можно открыть позже.' },
 ]
 
 export const FeaturesSection: React.FC = () => (
-  <section style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 40px' }} className="features-section">
+  <section id="features" style={{ maxWidth: 1080, margin: '0 auto', padding: '56px 40px' }} className="features-section">
     <div style={{ textAlign: 'center', marginBottom: 48 }}>
       <EyebrowLabel style={{ marginBottom: 12 }}>Возможности</EyebrowLabel>
       <SerifHeading size={42}>
-        Почему <Em>Apex</Em>
+        Почему <Em>Planika</Em>
       </SerifHeading>
     </div>
 
     <div style={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+      gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
       gap: 14,
     }} className="features-grid">
       {FEATURES.map(f => (
@@ -345,13 +371,13 @@ export const FeaturesSection: React.FC = () => (
 
 // ─── HowItWorks ───────────────────────────────────────────────────────────────
 const STEPS = [
-  { n: '1', color: colors.accent, title: 'Опиши цель', body: 'Напиши в чате что хочешь достичь и к какому сроку — в любых словах.' },
-  { n: '2', color: colors.teal,   title: 'Получи план', body: 'ИИ задаёт пару вопросов и строит реалистичный план с вехами.' },
-  { n: '3', color: colors.purple, title: 'Достигай',    body: 'Отмечаешь прогресс, ИИ анализирует и подсказывает. Фокус на действиях.' },
+  { n: '1', color: colors.accent, title: 'Заполни форму', body: 'Напиши цель, что у тебя уже есть и выбери срок: день, неделю, месяц, полгода или свой вариант.' },
+  { n: '2', color: colors.teal,   title: 'Получи AI-план', body: 'Planika вернёт стратегию, этапы, действия на неделю, риски и понятный первый шаг.' },
+  { n: '3', color: colors.purple, title: 'Сохрани цель', body: 'План попадает в дашборд: видны прогресс, текущий этап и история запросов по твоему аккаунту.' },
 ]
 
 export const HowItWorksSection: React.FC = () => (
-  <section style={{ maxWidth: 1080, margin: '0 auto', padding: '28px 40px 72px' }} className="how-section">
+  <section id="how" style={{ maxWidth: 1080, margin: '0 auto', padding: '28px 40px 72px' }} className="how-section">
     <div style={{ textAlign: 'center', marginBottom: 52 }}>
       <EyebrowLabel style={{ marginBottom: 12 }}>Как это работает</EyebrowLabel>
       <SerifHeading size={42}>
@@ -411,6 +437,133 @@ export const HowItWorksSection: React.FC = () => (
   </section>
 )
 
+// ─── Testimonials ────────────────────────────────────────────────────────────
+const TESTIMONIALS = [
+  {
+    name: 'Марина',
+    role: 'учит английский',
+    text: 'Я перестала держать цель в голове. Заполнила форму, получила план на 3 месяца и теперь открываю только ближайший шаг.',
+  },
+  {
+    name: 'Денис',
+    role: 'запускает пет-проект',
+    text: 'Понравилось, что AI не пишет мотивационные лозунги, а разбивает задачу на этапы: MVP, первые пользователи, метрики.',
+  },
+  {
+    name: 'Алина',
+    role: 'готовится к забегу',
+    text: 'Раньше я начинала слишком резко и бросала. Здесь план сразу учитывает мой срок и свободное время.',
+  },
+]
+
+export const TestimonialsSection: React.FC = () => (
+  <section id="reviews" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 72px' }} className="reviews-section">
+    <div style={{ textAlign: 'center', marginBottom: 34 }}>
+      <EyebrowLabel style={{ marginBottom: 12 }}>Отзывы</EyebrowLabel>
+      <SerifHeading size={42}>
+        Как люди используют <Em>Planika</Em>
+      </SerifHeading>
+    </div>
+
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+      gap: 14,
+    }}>
+      {TESTIMONIALS.map(item => (
+        <div key={item.name} style={{
+          background: colors.surface,
+          border: `1px solid ${colors.border}`,
+          borderRadius: radius.xl,
+          padding: '22px',
+        }}>
+          <div style={{ fontSize: 34, color: colors.accent, fontFamily: fonts.serif, lineHeight: 0.8, marginBottom: 8 }}>“</div>
+          <p style={{ fontSize: 13.5, color: colors.textMuted, lineHeight: 1.75, fontFamily: fonts.sans, marginBottom: 18 }}>
+            {item.text}
+          </p>
+          <div style={{ fontSize: 14, color: colors.text, fontWeight: 500 }}>{item.name}</div>
+          <div style={{ fontSize: 11, color: colors.textFaint, marginTop: 3 }}>{item.role}</div>
+        </div>
+      ))}
+    </div>
+  </section>
+)
+
+// ─── Pricing ─────────────────────────────────────────────────────────────────
+const PRICING = [
+  {
+    title: 'Старт',
+    price: '$0',
+    note: 'первые 3 цели',
+    points: ['3 AI-плана бесплатно', 'История целей в аккаунте', 'Дашборд прогресса'],
+    accent: colors.teal,
+  },
+  {
+    title: 'Одна цель',
+    price: '$0.99',
+    note: 'за каждую следующую',
+    points: ['Подробный AI-план', 'Этапы и ближайшее действие', 'Сохранение в историю'],
+    accent: colors.accent,
+  },
+  {
+    title: 'Пакет 5 целей',
+    price: '$3.99',
+    note: 'экономия на серии целей',
+    points: ['5 дополнительных AI-планов', 'Удобно для месяца планирования', 'Все цели в одном дашборде'],
+    accent: colors.purple,
+  },
+]
+
+export const PricingSection: React.FC = () => (
+  <section id="pricing" style={{ maxWidth: 1080, margin: '0 auto', padding: '20px 40px 72px' }} className="pricing-section">
+    <div style={{ textAlign: 'center', marginBottom: 34 }}>
+      <EyebrowLabel style={{ marginBottom: 12 }}>Тарифы</EyebrowLabel>
+      <SerifHeading size={42}>
+        Начни <Em>бесплатно</Em>
+      </SerifHeading>
+      <p style={{ fontSize: 14, color: colors.textMuted, marginTop: 12, fontFamily: fonts.sans }}>
+        Первые 3 цели бесплатны. Дальше плати только за новые AI-планы.
+      </p>
+    </div>
+
+    <div className="pricing-grid" style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+      gap: 14,
+    }}>
+      {PRICING.map(plan => (
+        <div key={plan.title} style={{
+          background: `linear-gradient(145deg, ${plan.accent}12, ${colors.surface} 44%)`,
+          border: `1px solid ${plan.accent}44`,
+          borderRadius: radius.xl,
+          padding: '22px',
+          position: 'relative',
+          overflow: 'hidden',
+        }}>
+          <div style={{ position: 'absolute', inset: 0, opacity: 0.025 }}>
+            <GoldTexture opacity={1} />
+          </div>
+          <div style={{ position: 'relative' }}>
+            <div style={{ fontSize: 14, color: colors.text, fontWeight: 500, marginBottom: 12 }}>{plan.title}</div>
+            <div style={{ fontFamily: fonts.serif, fontSize: 42, color: plan.accent, fontStyle: 'italic', lineHeight: 1 }}>
+              {plan.price}
+            </div>
+            <div style={{ fontSize: 12, color: colors.textFaint, marginTop: 5, marginBottom: 18 }}>{plan.note}</div>
+            <div style={{ display: 'grid', gap: 9 }}>
+              {plan.points.map(point => (
+                <div key={point} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', fontSize: 13, color: colors.textMuted, lineHeight: 1.5 }}>
+                  <SparkIcon size={12} color={plan.accent} />
+                  <span>{point}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+)
+
 // ─── CtaBanner ────────────────────────────────────────────────────────────────
 export const CtaBanner: React.FC = () => {
   const dispatch = useAppDispatch()
@@ -439,7 +592,7 @@ export const CtaBanner: React.FC = () => {
           fontSize: 14.5, color: colors.textMuted, marginBottom: 30,
           position: 'relative', fontFamily: fonts.sans,
         }}>
-          Это бесплатно. Первая цель — уже через 2 минуты.
+          Первые 3 цели бесплатны. Заполни форму — и получи первый AI-план уже через пару минут.
         </p>
 
         <div style={{ position: 'relative' }}>
@@ -466,19 +619,14 @@ export const LandingFooter: React.FC = () => (
     <div style={{
       display: 'flex', alignItems: 'baseline', gap: 10,
     }}>
-      <div style={{
-        fontSize: 20, color: colors.accent, fontFamily: fonts.serif,
-        fontStyle: 'italic', letterSpacing: '1.2px',
-      }}>
-        Apex
-      </div>
+      <BrandLogo size={20} />
       <EyebrowLabel size={9.5} spacing="1.8px">цели с ИИ</EyebrowLabel>
     </div>
     <div style={{
       fontSize: 11, color: colors.textGhost, fontFamily: fonts.mono,
       letterSpacing: '0.5px',
     }}>
-      © 2026 · APEX
+      © 2026 · PLANIKA
     </div>
   </footer>
 )
